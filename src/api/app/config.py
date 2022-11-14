@@ -79,7 +79,8 @@ class Settings(BaseSettings):
 
     # Single-Sign-On (SSO)
     sso_api_url: str = "https://api.florgon.space"
-    sso_api_method: str = "secure.checkAccessToken"
+    sso_api_oauth_exchange: str = "oauth.accessToken"
+    sso_api_client_secret: str = ""
 
 
 # Static settings object with single instance.

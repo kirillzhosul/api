@@ -30,6 +30,7 @@ async def method_courses_lectures_new() -> JSONResponse:
 
     return api_error(ApiErrorCode.API_NOT_IMPLEMENTED, "Courses not implemented yet.")
 
+
 @router.get("/courses/lectures/edit")
 async def method_courses_lectures_edit() -> JSONResponse:
     """Edits course lecture (permitted only)."""
