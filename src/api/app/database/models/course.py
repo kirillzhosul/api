@@ -40,7 +40,7 @@ class Course(Base):
     description = Column(Text, nullable=False, default="...")
     published_at = Column(DateTime(timezone=True), server_default=func.now())
     edited_at = Column(DateTime(timezone=True), server_default=func.now())
-    difficulty = Column(Enum(CourseDifficulty), nullable=False)
+    difficulty = Column(Integer, nullable=False)
     preview_url = Column(String, nullable=True)
 
     # Flags.

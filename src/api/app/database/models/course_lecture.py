@@ -9,6 +9,7 @@ from sqlalchemy import Boolean, Column, DateTime, Text, Integer, String, Foreign
 # ORM.
 from sqlalchemy.sql import func
 
+
 class CourseLecture(Base):
     """Course model. """
 
