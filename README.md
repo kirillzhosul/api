@@ -1,6 +1,6 @@
 # Kirill Zhosul API.
 
-API server for my personal website.
+API server for my personal website. ([frontend](https://github.com/kirillzhosul/web) (click)).
 
 ### See in action.
 
