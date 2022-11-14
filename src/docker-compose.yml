@@ -17,7 +17,7 @@ services:
     env_file:
       - .database.env
     networks:
-      - -kirillzhosul-api
+      - kirillzhosul-api
     command:
       - "postgres"
       - "-c" # Max connection limit for database.
