@@ -82,7 +82,7 @@ class Settings(BaseSettings):
     sso_api_oauth_exchange: str = "oauth.accessToken"
     sso_api_client_secret: str = ""
     sso_api_client_id: int = 0
-
+    sso_api_redirect_uri: str = ""
 
 # Static settings object with single instance.
 _settings = Settings()
