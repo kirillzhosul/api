@@ -20,7 +20,8 @@ async def method_auth_sso(code: str) -> JSONResponse:
 
     exchange_timeout = 5
     exchange_method = f"{settings.sso_api_url}/{settings.sso_api_oauth_exchange}"
-    exchange_req = requests.get(f"{exchange_method}?code={code}&client_secret={settings.sso_api_client_secret}", timeout=exchange_timeout)
+    exchange_params = f"code={code}&client_secret={settings.sso_api_client_secret}&client_id={settings.sso_api_client_id}"
+    exchange_req = requests.get(f"{exchange_method}?{exchange_params}", timeout=exchange_timeout)
 
     exchange_json = exchange_req.json()
 
