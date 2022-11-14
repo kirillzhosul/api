@@ -4,11 +4,10 @@
 
 # Core model base.
 from app.database.core import Base
-from sqlalchemy import Column, DateTime, Integer
+from sqlalchemy import Column, DateTime, Integer, String, Boolean
 
 # ORM.
 from sqlalchemy.sql import func
-
 
 class User(Base):
     """User model"""
@@ -17,6 +16,10 @@ class User(Base):
 
     # Access data.
     id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, nullable=True)
+
+    # Permissions.
+    is_admin = Column(Boolean, default=False)
 
     # Time.
     time_created = Column(
