@@ -17,7 +17,9 @@ class ApiErrorCode(Enum):
     API_TOO_MANY_REQUESTS = 6, 429
     API_FORBIDDEN = 7, 403
     API_ITEM_NOT_FOUND = 8, 404
-
+    AUTH_REQUIRED = 10, 401
+    AUTH_INVALID_TOKEN = 11, 400
+    AUTH_EXPIRED_TOKEN = 12, 400
 
 class ApiErrorException(Exception):
     """

@@ -43,3 +43,33 @@ async def internal_server_error_handler(_, __):
         ApiErrorCode.API_INTERNAL_SERVER_ERROR,
         "Internal server error! Server is unavailable at this time. Please try again later.",
     )
+
+async def token_wrong_type_error_handler(_, __):
+    """Handler for token module token wrong type error."""
+    return api_error(
+        ApiErrorCode.AUTH_INVALID_TOKEN,
+        "Token has wrong type! Please read documentation for the required method.",
+    )
+
+
+async def token_expired_error_handler(_, __):
+    """Handler for token module token expired error."""
+    return api_error(
+        ApiErrorCode.AUTH_EXPIRED_TOKEN,
+        "Token has been expired! Please get new fresh token.",
+    )
+
+
+async def token_invalid_signature_error_handler(_, __):
+    """Handler for token module token invalid signature error."""
+    return api_error(
+        ApiErrorCode.AUTH_INVALID_TOKEN,
+        "Token has invalid signature! Means that server unable to verify that token signed by itself.",
+    )
+
+
+async def token_invalid_error_handler(_, __):
+    """Handler for token module token invalid error."""
+    return api_error(
+        ApiErrorCode.AUTH_INVALID_TOKEN, "Token invalid! No additonal information. "
+    )
