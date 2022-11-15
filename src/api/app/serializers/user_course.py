@@ -10,7 +10,8 @@ def serialize(user_course: UserCourse, in_list: bool = False):
     """Returns dict object for API response with serialized user purchased course data."""
 
     serialized_user_course = {
-        "id": user_course.id,
+        "purchase_id": user_course.id,
+        "course_id": user_course.course_id,
         "purchased_for": user_course.purchased_for,
         "purchased_at": time.mktime(user_course.time_purchased.timetuple()),
     }
