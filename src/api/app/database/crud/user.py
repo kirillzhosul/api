@@ -30,4 +30,4 @@ def get_or_create(db: Session, user_id: int, email: str | None = None) -> User:
     user = get_by_id(db, user_id)
     if user is None:
         return create(db, user_id=user_id, email=email)
-    return 
+    return user
