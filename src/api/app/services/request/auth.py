@@ -140,13 +140,14 @@ def _query_auth_data(
     user_id = auth_data.token.get_subject()
     user = crud.user.get_by_id(db=db, user_id=user_id)
 
-    if not user or auth_data.user_id != user.id:
+    if not user:
         # Internal authentication system integrity check.
         # users should never be deleted and this should never happen.
         _raise_integrity_check_error()
 
     # TODO: Check user activity? (is_active)
     # Return modified DTO with user ORM model instance.
+    auth_data.user_id = user_id
     auth_data.user = user
     return auth_data
 
