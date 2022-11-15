@@ -3,11 +3,10 @@
 """
 
 
-from app.database.dependencies import Session
 from app.database.models.user import User
 
 
-def serialize(db: Session, user: User, in_list: bool = False):
+def serialize(user: User, in_list: bool = False):
     """Returns dict object for API response with serialized user data."""
 
     serialized_user = {
@@ -21,11 +20,11 @@ def serialize(db: Session, user: User, in_list: bool = False):
     return {"user": serialized_user}
 
 
-def serialize_list(db: Session, users: list[User]) -> dict:
+def serialize_list(users: list[User]) -> dict:
     """Returns dict object for API response with serialized users list data."""
 
     return {
-        "users": [serialize(db=db, user=user, in_list=True) for user in users]
+        "users": [serialize(user=user, in_list=True) for user in users]
     }
 
 

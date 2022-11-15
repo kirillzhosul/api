@@ -23,7 +23,7 @@ async def method_courses_list(public_only: bool = False, db: Session = Depends(g
     courses = crud.course.get_public(db) if public_only else crud.course.get_active(db)
     return api_success({
         "total": len(courses)
-    } |serialize_courses(db, courses=courses))
+    } |serialize_courses(courses))
 
 
 @router.get("/courses/get")
@@ -36,7 +36,7 @@ async def method_courses_get(name: str | None = None, course_id: int | None = No
     course = crud.course.get_by_id(course_id) if course_id else None
     if not course:
         return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Course not found!")
-    return api_success(serialize_course(db, course=course))
+    return api_success(serialize_course(course))
 
 
 @router.get("/courses/new")

@@ -4,10 +4,9 @@
 
 import time
 
-from app.database.dependencies import Session
 from app.database.models.course import Course, CourseDifficulty
 
-def serialize(db: Session, course: Course, in_list: bool = False):
+def serialize(course: Course, in_list: bool = False):
     """Returns dict object for API response with serialized course data."""
 
     serialized_course = {
@@ -34,11 +33,11 @@ def serialize(db: Session, course: Course, in_list: bool = False):
     return {"course": serialized_course}
 
 
-def serialize_list(db: Session, courses: list[Course]) -> dict:
+def serialize_list(courses: list[Course]) -> dict:
     """Returns dict object for API response with serialized courses list data."""
 
     return {
-        "courses": [serialize(db=db, course=course, in_list=True) for course in courses]
+        "courses": [serialize(course=course, in_list=True) for course in courses]
     }
 
 
