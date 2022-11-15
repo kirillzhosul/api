@@ -26,7 +26,7 @@ def create(db: Session, difficulty: CourseDifficulty, owner_id: int, name: str, 
 
     # Create new course.
     course = Course(
-        name=name.lowercase().replace(" ", "-"), 
+        name=name.lower().replace(" ", "-"), 
         difficulty=difficulty.value,
         price=price, 
         owner_id=owner_id, 
