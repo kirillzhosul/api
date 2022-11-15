@@ -8,8 +8,10 @@
 
 from .base_token import BaseToken
 from .access_token import AccessToken
+from . import exceptions
 
 __all__ = [
     "BaseToken",
-    "AccessToken"
+    "AccessToken",
+    "exceptions"
 ]
