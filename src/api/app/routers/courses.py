@@ -23,7 +23,7 @@ async def method_courses_list(public_only: bool = False, db: Session = Depends(g
     courses = crud.course.get_public(db) if public_only else crud.course.get_active(db)
     return api_success({
         "total": len(courses)
-    } |serialize_courses(courses))
+    } | serialize_courses(courses))
 
 
 @router.get("/courses/get")

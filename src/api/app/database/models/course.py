@@ -7,7 +7,7 @@ from enum import Enum, auto
 
 # Core model base.
 from app.database.core import Base
-from sqlalchemy import Boolean, Column, DateTime, Text, Integer, String, ForeignKey, Enum
+from sqlalchemy import Boolean, Column, DateTime, Text, Integer, String, ForeignKey
 
 # ORM.
 from sqlalchemy.sql import func
