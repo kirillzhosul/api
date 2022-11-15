@@ -26,7 +26,7 @@ def api_error(
     return JSONResponse(
         {
             "v": API_VERSION,
-            "error": {**{"message": message, "code": code, "status": status}, **data},
+            "error": {"message": message, "code": code, "status": status} | data,
         },
         status_code=status,
         headers=headers,
@@ -35,4 +35,4 @@ def api_error(
 
 def api_success(data: dict) -> JSONResponse:
     """Returns API success response."""
-    return JSONResponse({"v": API_VERSION, "success": {**data}}, status_code=200)
+    return JSONResponse({"v": API_VERSION, "success": data}, status_code=200)
