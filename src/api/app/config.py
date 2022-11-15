@@ -84,6 +84,11 @@ class Settings(BaseSettings):
     sso_api_client_id: int = 0
     sso_api_redirect_uri: str = ""
 
+    # Security.
+    security_access_tokens_ttl: int = 7776000
+    security_tokens_issuer: str = "localhost"
+    security_tokens_secret_key: str =  "RANDOM_SECRET_KEY_TO_BE_SECURE"
+
 # Static settings object with single instance.
 _settings = Settings()
 

@@ -9,6 +9,7 @@ from sqlalchemy import Column, DateTime, Integer, String, Boolean
 # ORM.
 from sqlalchemy.sql import func
 
+
 class User(Base):
     """User model"""
 
