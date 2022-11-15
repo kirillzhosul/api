@@ -8,6 +8,7 @@ from app.services.request.auth import query_auth_data_from_request
 from app.database.dependencies import get_db, Session
 from app.database.models.course import CourseDifficulty
 from app.serializers.course import serialize_course, serialize_courses
+from app.serializers.user_course import serialize_user_course
 from app.database import crud
 from fastapi import APIRouter, Request, Depends
 from fastapi.responses import JSONResponse
@@ -37,6 +38,28 @@ async def method_courses_get(name: str | None = None, course_id: int | None = No
     if not course:
         return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Course not found!")
     return api_success(serialize_course(course))
+
+
+@router.get("/courses/buy")
+async def method_courses_buy(req: Request, name: str | None = None, course_id: int | None = None, db: Session = Depends(get_db)) -> JSONResponse:
+    """Buys course by id/name."""
+    auth_data = query_auth_data_from_request(req, db)
+    user_id = auth_data.user.id
+
+    if (not name and not course_id) or (name and course_id):
+        return api_error(ApiErrorCode.API_INVALID_REQUEST, "Please pass `name` or `course_id` (not both)!")
+
+    course = crud.course.get_by_id(db, course_id) if course_id else crud.course.get_by_name(db, name)
+    if not course:
+        return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Course not found!")
+    if course.price > 0:
+        return api_error(ApiErrorCode.API_FORBIDDEN, "Purchasing courses that are not free is not implemented yet!")
+
+    if crud.user_course.get_by_user_id_and_course_id(db, user_id=user_id, course_id=course.id):
+        return api_error(ApiErrorCode.API_FORBIDDEN, "That course is already purchased by you!")
+
+    purchased_course = crud.user_course.create(db, user_id=user_id, course_id=course.id)    
+    return api_success(serialize_user_course(purchased_course))
 
 
 @router.get("/courses/new")

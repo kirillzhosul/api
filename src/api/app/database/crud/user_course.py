@@ -17,6 +17,13 @@ def get_by_user_id(db: Session, user_id: int) -> UserCourse:
     return db.query(UserCourse).filter(UserCourse.user_id == user_id).all()
 
 
+def get_by_user_id_and_course_id(db: Session, user_id: int, course_id: int) -> UserCourse:
+    """Returns user course by owner user ID and course."""
+    return db.query(UserCourse).\
+        filter(UserCourse.user_id == user_id).\
+        filter(UserCourse.course_id == course_id).\
+            all()
+
 def create(db: Session, user_id: int, course_id: int) -> UserCourse:
     """Creates new user purchased course."""
 
