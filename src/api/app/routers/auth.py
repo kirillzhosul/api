@@ -8,7 +8,7 @@ import requests
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
-from app.config import get_settings, Settings
+from app.config import get_settings, Settings, get_logger
 from app.database import crud
 from app.database.dependencies import get_db, Session
 from app.services.api.response import ApiErrorCode, api_error, api_success
@@ -33,6 +33,7 @@ async def method_auth_sso(code: str, db: Session = Depends(get_db)) -> JSONRespo
     """Returns token from SSO OAuth code."""
 
     settings = get_settings()
+    logger = get_logger()
 
     exchange_response = send_sso_oauth_exchange_request(oauth_code=code, settings=settings)
     exchange_json = exchange_response.json()
@@ -40,6 +41,7 @@ async def method_auth_sso(code: str, db: Session = Depends(get_db)) -> JSONRespo
         exchange_json.get("error"), exchange_json.get("success")
 
     if exchange_error:
+        logger.warning(f"Failed to authenticate user with SSO! External server returned error code: '{exchange_error.get('code')}', with message: '{exchange_error.get('message')}'")
         return api_error(ApiErrorCode.API_UNKNOWN_ERROR, "SSO failed to exchange auth process and verify your auth.", {
             "sso_error": exchange_error
         })
@@ -57,6 +59,7 @@ async def method_auth_sso(code: str, db: Session = Depends(get_db)) -> JSONRespo
         user_id=current_user.id, 
     ).encode(key=settings.security_tokens_secret_key)
 
+    logger.info(f"Successfully authorized UID-{current_user.id}!")
     return api_success({
         "access_token": access_token,
         "user_id": current_user.id,

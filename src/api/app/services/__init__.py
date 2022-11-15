@@ -2,6 +2,6 @@
     Services utils.
 """
 
-from . import api
+from . import api, request
 
-__all__ = ["api"]
+__all__ = ["api", "request"]

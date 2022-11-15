@@ -4,6 +4,9 @@
     Variables should passed by Docker.
 """
 
+# Logs.
+import logging
+
 # Pydantic abstract class with data types.
 from pydantic import BaseSettings, PostgresDsn, RedisDsn
 
@@ -89,12 +92,23 @@ class Settings(BaseSettings):
     security_tokens_issuer: str = "localhost"
     security_tokens_secret_key: str =  "RANDOM_SECRET_KEY_TO_BE_SECURE"
 
-# Static settings object with single instance.
-_settings = Settings()
-
 
 def get_settings() -> Settings:
     """
     Returns Singleton settings object with all configuration settings.
     """
     return _settings
+
+
+def get_logger():
+    """
+    Returns logger.
+    """
+    return _logger
+
+
+# Static settings object with single instance.
+_settings = Settings()
+
+# Static logger.
+_logger = logging.getLogger("gunicorn.error")

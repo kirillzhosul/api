@@ -5,11 +5,11 @@
 """
 
 from fastapi import FastAPI
-
+from fastapi.logger import logger as fastapi_logger
 
 from . import database
 
-from .config import get_settings
+from .config import get_settings, get_logger
 
 from .event_handlers import add_event_handlers
 from .exception_handlers import add_exception_handlers
@@ -61,6 +61,12 @@ def _construct_app() -> FastAPI:
         root_path_in_servers=True,
     )
 
+    # Logging.
+    logger = get_logger()
+    fastapi_logger.handlers = logger.handlers
+    fastapi_logger.setLevel(logger.level)
+    logger.info("Successfully initalized FastAPI application with logger!")
+    
     # Initializing database connection and all ORM stuff.
     if settings.database_create_all:
         database.core.create_all()
