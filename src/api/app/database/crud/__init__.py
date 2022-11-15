@@ -2,6 +2,6 @@
     Database CRUD utils.
 """
 
-from . import user
+from . import user, user_course, course
 
-__all__ = ["user"]
+__all__ = ["user", "user_course", "course"]

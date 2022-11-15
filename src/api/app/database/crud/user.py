@@ -10,6 +10,9 @@ def get_by_id(db: Session, user_id: int) -> User:
     """Returns user by it`s ID."""
     return db.query(User).filter(User.id == user_id).first()
 
+def get_all(db: Session) -> list[User]:
+    """Returns all users. """
+    return db.query(User).all()
 
 def create(db: Session, user_id: int, email: str | None = None) -> User:
     """Creates new user."""

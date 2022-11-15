@@ -1,4 +1,8 @@
 """
     Database models serializers.
 """
-__all__ = []
+
+from . import user
+
+
+__all__ = ["user"]
