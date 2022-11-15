@@ -158,7 +158,7 @@ class BaseToken:
             "iss": self._issuer,
             "sub": self._subject,
             "iat": issued_at,
-        } | self.custom_payload,
+        } | self.custom_payload
 
         if self._ttl > 0:
             # If time-to-live (TTL) is not null,
