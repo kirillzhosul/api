@@ -33,7 +33,7 @@ class Course(Base):
 
     # Access data.
     id = Column(Integer, primary_key=True, index=True, nullable=False)
-    name = Column(String(48), nullable=False)
+    name = Column(String(48), nullable=False, unique=True)
 
     # Display data.
     title = Column(String, nullable=False)

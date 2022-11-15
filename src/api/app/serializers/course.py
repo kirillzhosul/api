@@ -9,6 +9,7 @@ from app.database.models.course import Course, CourseDifficulty
 def serialize(course: Course, in_list: bool = False):
     """Returns dict object for API response with serialized course data."""
 
+    difficulty_enum = CourseDifficulty(course.difficulty)
     serialized_course = {
         "id": course.id,
         "name": course.name,
@@ -19,8 +20,8 @@ def serialize(course: Course, in_list: bool = False):
         "is_active": course.is_active,
         "price": course.price,
         "difficulty": {
-            "name": CourseDifficulty(course.difficulty).name,
-            "value": CourseDifficulty(course.difficulty).name,
+            "name": difficulty_enum.name,
+            "value": difficulty_enum.value,
         },
         "published_at": time.mktime(course.published_at.timetuple()),
         "edited_at": time.mktime(course.edited_at.timetuple()),

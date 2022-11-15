@@ -11,6 +11,11 @@ def get_by_id(db: Session, course_id: int) -> Course:
     return db.query(Course).filter(Course.id == course_id).first()
 
 
+def get_by_name(db: Session, course_name: str) -> Course:
+    """Returns course by it`s name."""
+    return db.query(Course).filter(Course.name == course_name).first()
+
+
 def get_active(db: Session) -> list[Course]:
     """Returns all courses."""
     return db.query(Course).filter(Course.is_active == True).all()

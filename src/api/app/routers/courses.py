@@ -33,7 +33,7 @@ async def method_courses_get(name: str | None = None, course_id: int | None = No
     if (not name and not course_id) or (name and course_id):
         return api_error(ApiErrorCode.API_INVALID_REQUEST, "Please pass `name` or `course_id` (not both)!")
 
-    course = crud.course.get_by_id(course_id) if course_id else None
+    course = crud.course.get_by_id(db, course_id) if course_id else crud.course.get_by_name(db, name)
     if not course:
         return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Course not found!")
     return api_success(serialize_course(course))
@@ -61,7 +61,7 @@ async def method_courses_new(req: Request, difficulty: str, name: str, title: st
     )
     if not course:
         return api_error(ApiErrorCode.API_UNKNOWN_ERROR, "Failed to create new course!")
-    return api_success({})
+    return api_success(serialize_course(course))
 
 
 @router.get("/courses/edit")
