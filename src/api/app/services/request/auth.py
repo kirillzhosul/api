@@ -50,11 +50,10 @@ def query_auth_data_from_request(
     """
 
     # Get token from request and query data from it as external token.
-    token = _get_token_from_request(req)
+    token = _get_token_from_request(req=req)
     return query_auth_data_from_token(
-        token,
-        db,
-        request=req,
+        token=token,
+        db=db
     )
 
 
