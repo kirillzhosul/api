@@ -47,7 +47,7 @@ print_config = False  # Gunicorn will exit with information about config.
 # Process naming.
 # https://docs.gunicorn.org/en/latest/settings.html#process-naming#
 proc_name = None  # Should be inherited from below.
-default_proc_name = "kirillzhosul-api-api-gunicorn"
+default_proc_name = "kirillzhosul-api-gunicorn"
 
 # Socket.
 # https://docs.gunicorn.org/en/latest/settings.html#server-socket
