@@ -10,6 +10,7 @@ from app.database.models.course import CourseDifficulty
 from app.serializers.course import serialize_course, serialize_courses
 from app.serializers.user_course import serialize_user_course
 from app.database import crud
+from app.config import get_logger
 from fastapi import APIRouter, Request, Depends
 from fastapi.responses import JSONResponse
 
@@ -22,8 +23,10 @@ async def method_courses_list(public_only: bool = False, db: Session = Depends(g
     """Returns list of avaliable courses."""
 
     courses = crud.course.get_all(db, is_public=public_only)
+    total = len(courses)
+    get_logger().debug(f"Listed {total} courses for /courses/list request!")
     return api_success({
-        "total": len(courses)
+        "total": total
     } | serialize_courses(courses))
 
 
@@ -57,7 +60,18 @@ async def method_courses_buy(req: Request, name: str | None = None, course_id: i
     if crud.user_course.get_by_user_id_and_course_id(db, user_id=user_id, course_id=course.id):
         return api_error(ApiErrorCode.API_FORBIDDEN, "That course is already purchased by you!")
 
-    purchased_course = crud.user_course.create(db, user_id=user_id, course_id=course.id)    
+    purchased_course = crud.user_course.create(db, user_id=user_id, course_id=course.id)
+    if not purchased_course:
+        get_logger().warning(
+            "Failed to create new course purchase!"
+            f"From user_id: {user_id}, course_id: {course.id}, purchase ID: {purchased_course.id}"
+        )
+        return api_error(ApiErrorCode.API_UNKNOWN_ERROR, "Failed to purchase course due to unknown error!")
+
+    get_logger().info(
+        "New course purchased!"
+        f"From user_id: {user_id}, course_id: {course.id}, purchase ID: {purchased_course.id}, price: {course.price}."
+    )
     return api_success(serialize_user_course(purchased_course))
 
 
@@ -82,6 +96,7 @@ async def method_courses_new(req: Request, difficulty: str, name: str, title: st
         title=title, description=description
     )
     if not course:
+        get_logger().warning(f"Failed to create course object due to unexpected error!")
         return api_error(ApiErrorCode.API_UNKNOWN_ERROR, "Failed to create new course!")
     return api_success(serialize_course(course))
 

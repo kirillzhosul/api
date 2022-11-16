@@ -7,6 +7,7 @@ from app.services.api.response import api_error, api_success, ApiErrorCode
 from app.services.request.auth import query_auth_data_from_request, try_query_auth_data_from_request
 from app.database.dependencies import get_db, Session
 from app.database import crud
+from app.config import get_logger
 from app.database.models.course import Course
 from app.serializers.course_lecture import serialize_course_lecture, serialize_course_lectures
 from fastapi import APIRouter, Request, Depends
@@ -102,6 +103,7 @@ async def method_courses_lectures_new(req: Request,
         content=content
     )
     if not course_lecture:
+        get_logger().warning(f"Failed to create course lecture object due to unexpected error!")
         return api_error(ApiErrorCode.API_UNKNOWN_ERROR, "Failed to create new course lecture!")
     return api_success(serialize_course_lecture(course_lecture, show_content=True))
 

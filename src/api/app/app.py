@@ -70,6 +70,7 @@ def _construct_app() -> FastAPI:
     # Initializing database connection and all ORM stuff.
     if settings.database_create_all:
         database.core.create_all()
+        logger.debug("Created all database core entities!")
 
     # Register all internal stuff as routers/handlers/middlewares etc.
     add_event_handlers(app_instance)
@@ -77,6 +78,7 @@ def _construct_app() -> FastAPI:
     add_middlewares(app_instance)
     include_routers(app_instance)
 
+    logger.debug("Finished constructing application!")
     return app_instance
 
 
