@@ -39,7 +39,7 @@ class Settings(BaseSettings):
     gatey_project_id: int | None = None
     gatey_client_secret: str | None = None  # Not preferable.
     gatey_server_secret: str | None = None
-    
+
     # CORS.
 
     # If true, will add CORS middleware.
@@ -143,9 +143,16 @@ def get_settings() -> Settings:
     return _settings
 
 
+def get_gatey_client():
+    """
+    Returns Gatey client singleton (cached).
+    """
+    return _gatey
+
+
 def get_logger():
     """
-    Returns logger.
+    Returns logger singleton (cached).
     """
     return _logger
 
