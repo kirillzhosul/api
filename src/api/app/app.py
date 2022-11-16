@@ -65,7 +65,7 @@ def _construct_app() -> FastAPI:
     logger = get_logger()
     fastapi_logger.handlers = logger.handlers
     fastapi_logger.setLevel(logger.level)
-    logger.info("Successfully initalized FastAPI application with logger!")
+    logger.debug("Successfully initalized FastAPI application with logger!")
     
     # Initializing database connection and all ORM stuff.
     if settings.database_create_all:

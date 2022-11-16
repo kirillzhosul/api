@@ -63,13 +63,13 @@ async def method_courses_buy(req: Request, name: str | None = None, course_id: i
     purchased_course = crud.user_course.create(db, user_id=user_id, course_id=course.id)
     if not purchased_course:
         get_logger().warning(
-            "Failed to create new course purchase!"
-            f"From user_id: {user_id}, course_id: {course.id}, purchase ID: {purchased_course.id}"
+            "Failed to create new course purchase! "
+            f"From user_id: {user_id}, course_id: {course.id}"
         )
         return api_error(ApiErrorCode.API_UNKNOWN_ERROR, "Failed to purchase course due to unknown error!")
 
     get_logger().info(
-        "New course purchased!"
+        "New course purchased! "
         f"From user_id: {user_id}, course_id: {course.id}, purchase ID: {purchased_course.id}, price: {course.price}."
     )
     return api_success(serialize_user_course(purchased_course))

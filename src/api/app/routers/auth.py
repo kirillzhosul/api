@@ -31,7 +31,7 @@ def send_sso_oauth_exchange_request(oauth_code: str, settings: Settings, timeout
         get_logger().error(f"Got exception when processing request to OAuth provider!")
         raise
     return exchange_response
-
+    
 
 @router.get("/auth/sso")
 async def method_auth_sso(code: str, db: Session = Depends(get_db)) -> JSONResponse:
