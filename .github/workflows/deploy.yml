@@ -27,5 +27,6 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_SECRET }}
           port: ${{ secrets.DEPLOY_SSH_PORT }}
           script: |
-            cd /srv/kirillzhosul/api/src
+            cd /srv/api/kirillzhosul/api/src
             git pull && docker-compose up -d --build
+            exit
