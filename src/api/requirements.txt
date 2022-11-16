@@ -24,5 +24,9 @@ gatey-sdk==0.0.2
 pytest==7.2.0  # Unit tests.
 pytest-cov==3.0.0  # Tests coverage.
 
+# Mail wrapper for FastAPI.
+# used to send email messages.
+fastapi_mail==1.2.0
+
 # Security, authentication.
 pyjwt==2.6.0  # JWTokens implementation for the base token.

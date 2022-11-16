@@ -8,7 +8,7 @@
 import logging
 
 # Pydantic abstract class with data types.
-from pydantic import BaseSettings, PostgresDsn, RedisDsn
+from pydantic import BaseSettings, PostgresDsn, RedisDsn, EmailStr, conint
 
 # Libs.
 import gatey_sdk
@@ -34,7 +34,29 @@ class Settings(BaseSettings):
     # Pool size for database pool.
     database_pool_size: int = 20
 
+    # Mail.
+
+    # If false, email will be disabled and not even sent.
+    mail_enabled: bool = False
+    # Optional name for email (Like: "Name <mailing@kirillzhosul.site>")
+    mail_from_name: str | None = None
+    # Mail from email.
+    mail_from: EmailStr = "mailing@kirillzhosul.site"
+    # Mail server authentication.
+    mail_server: str = ""
+    mail_password: str = ""
+    mail_username: str = ""
+    # Mail server configuration.
+    mail_port: int = 587
+    mail_starttls: bool = False
+    mail_ssl_tls: bool = True
+    mail_use_credentials: bool = True
+    mail_validate_certs: bool = True
+    # Utils.
+    mail_debug: conint(gt=-1, lt=2) = 0
+
     # Gatey.
+
     gatey_is_enabled: bool = False
     gatey_project_id: int | None = None
     gatey_client_secret: str | None = None  # Not preferable.
