@@ -22,7 +22,7 @@ router = APIRouter()
 async def method_courses_list(public_only: bool = False, db: Session = Depends(get_db)) -> JSONResponse:
     """Returns list of avaliable courses."""
 
-    courses = crud.course.get_all(db, is_public=public_only)
+    courses = crud.course.get_all(db, public_only=public_only)
     total = len(courses)
     get_logger().debug(f"Listed {total} courses for /courses/list request!")
     return api_success({
