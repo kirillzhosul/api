@@ -15,10 +15,10 @@ def serialize(user_course: UserCourse, serailize_parent_course: bool = True,in_l
         "course_id": user_course.course_id,
         "purchased_for": user_course.purchased_for,
         "purchased_at": time.mktime(user_course.time_purchased.timetuple()),
-        
-    } | {
-        "course": serialize_course(user_course.course, in_list=False),
-    } if serailize_parent_course else {}
+    }
+    
+    if serailize_parent_course:
+        serialized_user_course |= serialize_course(user_course.course, in_list=False)
 
     if in_list:
         return serialized_user_course

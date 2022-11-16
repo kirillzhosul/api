@@ -43,8 +43,7 @@ async def method_courses_get(name: str | None = None, course_id: int | None = No
 @router.get("/courses/buy")
 async def method_courses_buy(req: Request, name: str | None = None, course_id: int | None = None, db: Session = Depends(get_db)) -> JSONResponse:
     """Buys course by id/name."""
-    auth_data = query_auth_data_from_request(req, db)
-    user_id = auth_data.user.id
+    user_id = query_auth_data_from_request(req, db).user.id
 
     if (not name and not course_id) or (name and course_id):
         return api_error(ApiErrorCode.API_INVALID_REQUEST, "Please pass `name` or `course_id` (not both)!")

@@ -4,6 +4,7 @@
 
 # Core model base.
 from app.database.core import Base
+from sqlalchemy.orm import relationship
 from sqlalchemy import Boolean, Column, DateTime, Text, Integer, String, ForeignKey
 
 # ORM.
@@ -18,6 +19,7 @@ class CourseLecture(Base):
     # Access data.
     id = Column(Integer, primary_key=True, index=True, nullable=False)
     course_id = Column(ForeignKey("courses.id"), nullable=False)
+    course = relationship("Course", back_populates="course_lectures")
 
     # Display data.
     title = Column(String, nullable=False)

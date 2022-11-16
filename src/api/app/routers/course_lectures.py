@@ -3,9 +3,12 @@
     Provides API methods (routes) for working with course lectures.
 """
 
-from app.services.api.response import api_error, ApiErrorCode
-from app.services.request.auth import query_auth_data_from_request
+from app.services.api.response import api_error, api_success, ApiErrorCode
+from app.services.request.auth import query_auth_data_from_request, try_query_auth_data_from_request
 from app.database.dependencies import get_db, Session
+from app.database import crud
+from app.database.models.course import Course
+from app.serializers.course_lecture import serialize_course_lecture, serialize_course_lectures
 from fastapi import APIRouter, Request, Depends
 from fastapi.responses import JSONResponse
 
@@ -13,28 +16,94 @@ from fastapi.responses import JSONResponse
 router = APIRouter()
 
 
+def user_has_access_to_course_content(db: Session, user_id: int | None, course: Course) -> bool:
+    """
+    Returns true if user has access to that course
+    :param user_id: If none, means unauthorized user.
+    """
+    if not course.is_public:
+        if user_id is None:
+            return False
+        user_course = crud.user_course.get_by_user_id_and_course_id(db=db, user_id=user_id, course_id=course.id)
+        return user_course is not None
+    return True
+
+
 @router.get("/courses/lectures/list")
-async def method_courses_lectures_list(req: Request, db: Session = Depends(get_db)) -> JSONResponse:
+async def method_courses_lectures_list(req: Request, course_id: int, db: Session = Depends(get_db)) -> JSONResponse:
     """Returns list of avaliable course lectures."""
 
-    query_auth_data_from_request(req, db)
-    return api_error(ApiErrorCode.API_NOT_IMPLEMENTED, "Courses not implemented yet.")
+    is_authenticated, auth_data = try_query_auth_data_from_request(req, db)
+    user_id = auth_data.user_id if is_authenticated else None
+
+    course = crud.course.get_by_id(db, course_id=course_id)
+    if not course:
+        return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Course with that ID not found!")
+
+    user_has_access_to_content = user_has_access_to_course_content(db, user_id, course)
+    return api_success(
+        serialize_course_lectures(
+            course_lectures=crud.course_lecture.get_by_course_id(db, course_id=course_id), 
+            show_content=user_has_access_to_content
+        ) | {
+            "content_hidden_until_purchase": not user_has_access_to_content
+        }
+    )
 
 
 @router.get("/courses/lectures/get")
-async def method_courses_lectures_get(req: Request, db: Session = Depends(get_db)) -> JSONResponse:
+async def method_courses_lectures_get(req: Request, course_id: int, course_lecture_id: int, db: Session = Depends(get_db)) -> JSONResponse:
     """Returns one course lecture by id/name."""
 
-    query_auth_data_from_request(req, db)
-    return api_error(ApiErrorCode.API_NOT_IMPLEMENTED, "Courses not implemented yet.")
+    is_authenticated, auth_data = try_query_auth_data_from_request(req, db)
+    user_id = auth_data.user_id if is_authenticated else None
+
+    course = crud.course.get_by_id(db, course_id=course_id)
+    if not course:
+        return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Course with that ID not found!")
+
+    course_lecture = crud.course_lecture.get_by_id(db, course_lecture_id=course_lecture_id)
+    if not course_lecture:
+        return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Course lecture with that ID not found!")
+    if course_lecture.course_id != course_id:
+        return api_error(ApiErrorCode.API_INVALID_REQUEST, "That course lecture does not belongs to requested course!")
+
+    user_has_access_to_content = user_has_access_to_course_content(db, user_id, course)
+    return api_success(
+        serialize_course_lecture(
+            course_lecture=course_lecture, 
+            show_content=user_has_access_to_content
+        ) | {
+            "content_hidden_until_purchase": not user_has_access_to_content
+        }
+    )
 
 
 @router.get("/courses/lectures/new")
-async def method_courses_lectures_new(req: Request, db: Session = Depends(get_db)) -> JSONResponse:
+async def method_courses_lectures_new(req: Request, 
+    course_id: int, title: str, description: str = "...", 
+    content: str = "...", db: Session = Depends(get_db)
+) -> JSONResponse:
     """Creates new course lecture (permitted only)."""
 
-    query_auth_data_from_request(req, db)
-    return api_error(ApiErrorCode.API_NOT_IMPLEMENTED, "Courses not implemented yet.")
+    auth_data = query_auth_data_from_request(req, db)
+    if not auth_data.user.is_admin:
+        return api_error(ApiErrorCode.API_FORBIDDEN, "You have no access to call this method!")
+    
+    course = crud.course.get_by_id(db, course_id=course_id)
+    if not course:
+        return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Course with that ID not found!")
+
+    course_lecture = crud.course_lecture.create(
+        db=db,
+        course_id=course.id,
+        title=title,
+        description=description,
+        content=content
+    )
+    if not course_lecture:
+        return api_error(ApiErrorCode.API_UNKNOWN_ERROR, "Failed to create new course lecture!")
+    return api_success(serialize_course_lecture(course_lecture, show_content=True))
 
 
 @router.get("/courses/lectures/edit")

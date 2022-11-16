@@ -52,7 +52,8 @@ class Course(Base):
     price = Column(Integer, default=0, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     user_courses = relationship("UserCourse", back_populates="course")
-
+    course_lectures = relationship("CourseLecture", back_populates="course")
+    
     # Times.
     # (database)
     time_created = Column(
