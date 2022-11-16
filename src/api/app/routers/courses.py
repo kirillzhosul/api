@@ -77,7 +77,7 @@ async def method_courses_buy(
         "New course purchased! "
         f"From user_id: {user.id}, course_id: {course.id}, purchase ID: {purchased_course.id}, price: {course.price}."
     )
-    await send_purchase_success_email(background_tasks, email=user.email, course=course, user_course=purchased_course)
+    send_purchase_success_email(background_tasks, email=user.email, course=course, user_course=purchased_course)
     return api_success(serialize_user_course(purchased_course))
 
 

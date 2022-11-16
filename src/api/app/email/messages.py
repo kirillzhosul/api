@@ -24,10 +24,10 @@ async def send_custom_email(recepients: list[str], subject: str, body: str):
         MessageSchema(subject=subject, recipients=recepients, body=body, subtype=MessageType.plain)
     )
 
-async def send_purchase_success_email(
+def send_purchase_success_email(
     background_tasks: BackgroundTasks, email: str, course: Course, user_course: UserCourse
 ):
-    """Send 2FA one time password email to the user."""
-    subject = "Success purchase! `{course.title}`"
+    """Send purchase complete email to the user."""
+    subject = f"Success purchase! `{course.title}`"
     message = f"Hello, {email}! You are purchased course `{course.title}` for {user_course.purchased_for} rubles! Purchase ID: {user_course.id}"
     background_tasks.add_task(send_custom_email, [email], subject, message)
