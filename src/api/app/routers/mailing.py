@@ -43,7 +43,9 @@ async def method_mailing_send(
     recepients = [user.email for user in users]
 
     if not skip_create_task:
-        background_tasks.add_task(send_custom_email, recepients, subject, message)
+        for recepient in recepients:
+            # Bad!
+            background_tasks.add_task(send_custom_email, [recepient], subject, message)
 
     response = {
         "total_recepients": len(recepients),
