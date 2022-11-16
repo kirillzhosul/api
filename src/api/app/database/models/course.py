@@ -7,6 +7,7 @@ from enum import Enum, auto
 
 # Core model base.
 from app.database.core import Base
+from sqlalchemy.orm import relationship
 from sqlalchemy import Boolean, Column, DateTime, Text, Integer, String, ForeignKey
 
 # ORM.
@@ -42,7 +43,7 @@ class Course(Base):
     edited_at = Column(DateTime(timezone=True), server_default=func.now())
     difficulty = Column(Integer, nullable=False)
     preview_url = Column(String, nullable=True)
-
+    
     # Flags.
     is_public = Column(Boolean, nullable=False, default=True) # Means course can be accessed without auth, publicly.
     is_active = Column(Boolean, nullable=False, default=True) # Will never shown in listings.
@@ -50,6 +51,7 @@ class Course(Base):
     # Other.
     price = Column(Integer, default=0, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_courses = relationship("UserCourse", back_populates="course")
 
     # Times.
     # (database)

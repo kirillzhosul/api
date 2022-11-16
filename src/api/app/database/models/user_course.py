@@ -4,6 +4,7 @@
 
 # Core model base.
 from app.database.core import Base
+from sqlalchemy.orm import relationship
 from sqlalchemy import Column, DateTime, Integer, ForeignKey
 
 # ORM.
@@ -19,6 +20,7 @@ class UserCourse(Base):
     id = Column(Integer, primary_key=True, index=True, nullable=False)
     user_id = Column(ForeignKey("users.id"), nullable=False)
     course_id = Column(ForeignKey("courses.id"), nullable=False)
+    course = relationship("Course", back_populates="user_courses")
 
     # Price.
     purchased_for = Column(Integer, nullable=False)

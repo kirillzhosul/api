@@ -6,7 +6,7 @@ import time
 
 from app.database.models.course import Course, CourseDifficulty
 
-def serialize(course: Course, in_list: bool = False):
+def serialize(course: Course, in_list: bool = False) -> dict:
     """Returns dict object for API response with serialized course data."""
 
     difficulty_enum = CourseDifficulty(course.difficulty)
