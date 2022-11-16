@@ -45,10 +45,13 @@ async def method_mailing_send(
     if not skip_create_task:
         background_tasks.add_task(send_custom_email, recepients, subject, message)
 
-    return api_success({
+    response = {
         "total_recepients": len(recepients),
-        "task_created": skip_create_task
-    } | {
-        "recepients": recepients
-    } if display_recepients else {})
+        "task_created": not skip_create_task
+    }
+    if display_recepients:
+        response |= {
+            "recepients": recepients
+        }
+    return api_success(response)
 
