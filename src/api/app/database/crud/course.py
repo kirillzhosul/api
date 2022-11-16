@@ -17,6 +17,7 @@ def get_by_name(db: Session, course_name: str) -> Course:
 
 
 def get_all(db: Session, is_public: bool = True, is_active = True) -> list[Course]:
+    """Returns all courses by specified parameters."""
     return db.query(Course).filter(
             Course.is_public == is_public,
             Course.is_active == is_active).all()
