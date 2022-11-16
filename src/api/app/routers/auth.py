@@ -21,12 +21,17 @@ def send_sso_oauth_exchange_request(oauth_code: str, settings: Settings, timeout
     """
         Sends OAuth exchange request to SSO server and returns response.
     """
+    get_logger().debug("Sending request to OAuth provider to obtain access token...")
     exchange_method = f"{settings.sso_api_url}/{settings.sso_api_oauth_exchange}"
     exchange_client_params = f"client_secret={settings.sso_api_client_secret}&client_id={settings.sso_api_client_id}&redirect_uri={settings.sso_api_redirect_uri}"
     exchange_params = f"{exchange_client_params}&code={oauth_code}&grant_type=authorization_code"
-    exchange_response = requests.get(f"{exchange_method}?{exchange_params}", timeout=timeout)
+    try:
+        exchange_response = requests.get(f"{exchange_method}?{exchange_params}", timeout=timeout)
+    except requests.exceptions.RequestException:
+        get_logger().error(f"Got exception when processing request to OAuth provider!")
+        raise
     return exchange_response
-
+    
 
 @router.get("/auth/sso")
 async def method_auth_sso(code: str, db: Session = Depends(get_db)) -> JSONResponse:
@@ -41,7 +46,10 @@ async def method_auth_sso(code: str, db: Session = Depends(get_db)) -> JSONRespo
         exchange_json.get("error"), exchange_json.get("success")
 
     if exchange_error:
-        logger.warning(f"Failed to authenticate user with SSO! External server returned error code: '{exchange_error.get('code')}', with message: '{exchange_error.get('message')}'")
+        logger.warning(
+            "Failed to authenticate user with SSO OAuth provider!"
+            f"OAuth provider returned error code {exchange_error.get('code')} with message: '{exchange_error.get('message')}'"
+        )
         return api_error(ApiErrorCode.API_UNKNOWN_ERROR, "SSO failed to exchange auth process and verify your auth.", {
             "sso_error": exchange_error
         })
@@ -49,9 +57,14 @@ async def method_auth_sso(code: str, db: Session = Depends(get_db)) -> JSONRespo
     sso_user_email = exchange_data.get("email")
     sso_user_id = exchange_data.get("user_id")
     if not sso_user_email or not sso_user_id:
+        logger.warning(f"OAuth provider not return required data (Data: user_id[{sso_user_id}], email[{'*' * len(sso_user_email)}]!")
         return api_error(ApiErrorCode.API_FORBIDDEN, "Unable to query required data from exchanged request. Please review granted OAuth permissions!")
     
-    current_user = crud.user.get_or_create(db, user_id=sso_user_id, email=sso_user_email)
+    current_user = crud.user.get_by_id(db, user_id=sso_user_id)
+    if current_user is None:
+        logger.info(f"Registered new user with user_id: {sso_user_id}")
+        current_user = crud.user.create(db, user_id=sso_user_id, email=sso_user_email)
+
     access_token_ttl = settings.security_access_tokens_ttl
     access_token = AccessToken(
         issuer=settings.security_tokens_issuer, 
@@ -59,7 +72,7 @@ async def method_auth_sso(code: str, db: Session = Depends(get_db)) -> JSONRespo
         user_id=current_user.id, 
     ).encode(key=settings.security_tokens_secret_key)
 
-    logger.info(f"Successfully authorized UID-{current_user.id}!")
+    logger.info(f"Successfully authorized user with id: {current_user.id}!")
     return api_success({
         "access_token": access_token,
         "user_id": current_user.id,
