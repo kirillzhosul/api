@@ -16,6 +16,10 @@ aioredis==2.0.1  # Async Redis engine.
 # Testing and OAuth providers (make request to OAuth provider OAuth code resolver).
 requests==2.28.1  # Make requests to server.
 
+# Florgon Gatey SDK.
+# (Error logging service).
+gatey-sdk==0.0.2
+
 # CI/CD, Testing.
 pytest==7.1.2  # Unit tests.
 pytest-cov==3.0.0  # Tests coverage.
