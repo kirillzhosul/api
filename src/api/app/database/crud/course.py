@@ -20,14 +20,23 @@ def get_by_name(db: Session, course_name: str) -> Course:
 def get_all_filtered_paginated(db: Session, 
     public_only: bool = True, active_only: bool = True, 
     language: str | None = None,
+    max_price: int | None = None,
+    difficulty: CourseDifficulty | None = None,
     per_page: int = 5, page: int = 1
 ) -> tuple[list[Course], int, int]:
     """Returns all courses by specified parameters."""
+    if per_page < 1 or page < 1:
+        raise ValueError("per_page and page should be >= 1")
+    
     query = db.query(Course)
     if active_only:
         query = query.filter(Course.is_active == active_only)
     if public_only:
         query = query.filter(Course.is_public == public_only)
+    if max_price:
+        query = query.filter(Course.price <= max_price)
+    if difficulty:
+        query = query.filter(Course.difficulty == difficulty.value)
     if language:
         pass
 

@@ -24,21 +24,28 @@ async def method_courses_list(
     public_only: bool = False, active_only: bool = True, 
     exclude_foreign_languages: bool = False,
     language: str = "en",
-    page: int = 1,
-    per_page: int = 5,
+    page: int = 1, per_page: int = 5,
+    difficulty: str | None = None,
+    max_price: int | None = None,
     db: Session = Depends(get_db)
 ) -> JSONResponse:
     """Returns list of avaliable courses."""
 
-    if per_page > 10:
-        return api_error(ApiErrorCode.API_INVALID_REQUEST, "Max per_page is 10!")
+    if 1 > per_page > 10:
+        return api_error(ApiErrorCode.API_INVALID_REQUEST, "`per_page` should between 1 and 10!")
     if page < 1:
-        return api_error(ApiErrorCode.API_INVALID_REQUEST, "Min page is 1!")
+        return api_error(ApiErrorCode.API_INVALID_REQUEST, "Min `page` is 1!")
     
+    try:
+        difficulty_enum = CourseDifficulty[difficulty] if difficulty else None
+    except KeyError:
+        return api_error(ApiErrorCode.API_INVALID_REQUEST, "Invalid difficulty name!")
+
     courses, courses_total, max_page = crud.course.get_all_filtered_paginated(
         db=db, 
         public_only=public_only, active_only=active_only,
         language=language if exclude_foreign_languages else None,
+        difficulty=difficulty_enum, max_price=max_price,
         page=page, per_page=per_page
     )
     current_total = len(courses)
