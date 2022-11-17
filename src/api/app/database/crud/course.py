@@ -31,14 +31,19 @@ def get_all_filtered_paginated(db: Session,
     if language:
         pass
 
+    # Total courses in database for that query (without pagination).
+    courses_total = query.count()
+
+    # Calculate values.
     max_page = ceil(courses_total / per_page)
     page_offset = per_page * (page - 1)
     
-    courses_total = query.count()
+    # Paginate and return query courses.
     query = query.\
         offset(offset=page_offset).\
             limit(limit=per_page)
     courses = query.all()
+
     return courses, courses_total, max_page
 
 
