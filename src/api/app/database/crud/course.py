@@ -2,6 +2,7 @@
     Course CRUD utils for the database.
 """
 
+from math import ceil
 from sqlalchemy.orm import Session
 from app.database.models.course import Course, CourseDifficulty
 
@@ -19,8 +20,8 @@ def get_by_name(db: Session, course_name: str) -> Course:
 def get_all_filtered_paginated(db: Session, 
     public_only: bool = True, active_only: bool = True, 
     language: str | None = None,
-    limit: int = 5, offset: int = 0
-) -> tuple[list[Course], int]:
+    per_page: int = 5, page: int = 1
+) -> tuple[list[Course], int, int]:
     """Returns all courses by specified parameters."""
     query = db.query(Course)
     if active_only:
@@ -30,10 +31,15 @@ def get_all_filtered_paginated(db: Session,
     if language:
         pass
 
+    max_page = ceil(courses_total / per_page)
+    page_offset = per_page * (page - 1)
+    
     courses_total = query.count()
-    query = query.offset(offset=offset).limit(limit=limit)
+    query = query.\
+        offset(offset=page_offset).\
+            limit(limit=per_page)
     courses = query.all()
-    return courses, courses_total
+    return courses, courses_total, max_page
 
 
 def create(db: Session, difficulty: CourseDifficulty, owner_id: int, name: str, title: str, description: str = "...", price: int = 0) -> Course:
