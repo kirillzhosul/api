@@ -2,7 +2,7 @@
     Courses API router.
     Provides API methods (routes) for working with courses.
 """
-
+from math import ceil
 from app.services.api.response import api_error, ApiErrorCode, api_success
 from app.services.request.auth import query_auth_data_from_request
 from app.database.dependencies import get_db, Session
@@ -47,7 +47,7 @@ async def method_courses_list(
         "pagination": {
             "page": page,
             "per_page": per_page,
-            "max_page": courses_total / per_page,
+            "max_page": ceil(courses_total / per_page),
         }
     } | serialize_courses(courses))
 
