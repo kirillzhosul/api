@@ -31,15 +31,21 @@ def user_has_access_to_course_content(db: Session, user_id: int | None, course: 
 
 
 @router.get("/courses/lectures/list")
-async def method_courses_lectures_list(req: Request, course_id: int, db: Session = Depends(get_db)) -> JSONResponse:
+async def method_courses_lectures_list(req: Request, 
+    course_id: int | None = None, course_name: str | None = None, 
+    db: Session = Depends(get_db)
+) -> JSONResponse:
     """Returns list of avaliable course lectures."""
+
+    if (not course_name and not course_id) or (course_name and course_id):
+        return api_error(ApiErrorCode.API_INVALID_REQUEST, "Please pass `course_name` or `course_id` (not both)!")
 
     is_authenticated, auth_data = try_query_auth_data_from_request(req, db)
     user_id = auth_data.user_id if is_authenticated else None
 
-    course = crud.course.get_by_id(db, course_id=course_id)
+    course = crud.course.get_by_id(db, course_id) if course_id else crud.course.get_by_name(db, course_name)
     if not course:
-        return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Course with that ID not found!")
+        return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Course with that ID or name not found!")
 
     user_has_access_to_content = user_has_access_to_course_content(db, user_id, course)
     return api_success(
@@ -53,13 +59,19 @@ async def method_courses_lectures_list(req: Request, course_id: int, db: Session
 
 
 @router.get("/courses/lectures/get")
-async def method_courses_lectures_get(req: Request, course_id: int, course_lecture_id: int, db: Session = Depends(get_db)) -> JSONResponse:
+async def method_courses_lectures_get(req: Request, 
+    course_lecture_id: int, course_id: int | None = None, course_name: str | None = None, 
+    db: Session = Depends(get_db)
+) -> JSONResponse:
     """Returns one course lecture by id/name."""
+    
+    if (not course_name and not course_id) or (course_name and course_id):
+        return api_error(ApiErrorCode.API_INVALID_REQUEST, "Please pass `course_name` or `course_id` (not both)!")
 
     is_authenticated, auth_data = try_query_auth_data_from_request(req, db)
     user_id = auth_data.user_id if is_authenticated else None
 
-    course = crud.course.get_by_id(db, course_id=course_id)
+    course = crud.course.get_by_id(db, course_id) if course_id else crud.course.get_by_name(db, course_name)
     if not course:
         return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Course with that ID not found!")
 

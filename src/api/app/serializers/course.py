@@ -25,6 +25,7 @@ def serialize(course: Course, in_list: bool = False) -> dict:
         },
         "published_at": time.mktime(course.published_at.timetuple()),
         "edited_at": time.mktime(course.edited_at.timetuple()),
+        "language": "en",
     }
 
 

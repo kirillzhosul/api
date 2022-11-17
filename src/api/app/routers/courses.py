@@ -20,14 +20,35 @@ router = APIRouter()
 
 
 @router.get("/courses/list")
-async def method_courses_list(public_only: bool = False, active_only: bool = True, db: Session = Depends(get_db)) -> JSONResponse:
+async def method_courses_list(
+    public_only: bool = False, active_only: bool = True, 
+    exclude_foreign_languages: bool = False,
+    language: str = "en",
+    page: int = 0,
+    per_page: int = 5,
+    db: Session = Depends(get_db)
+) -> JSONResponse:
     """Returns list of avaliable courses."""
 
-    courses = crud.course.get_all(db, public_only=public_only, active_only=active_only)
+    if per_page > 10:
+        return api_error(ApiErrorCode.API_INVALID_REQUEST, "Max per_page is 10!")
+    
+    courses, courses_total = crud.course.get_all_filtered_paginated(
+        db=db, 
+        public_only=public_only, active_only=active_only,
+        language=language if exclude_foreign_languages else None,
+        offset=per_page * page,
+        limit=per_page
+    )
     total = len(courses)
     get_logger().debug(f"Listed {total} courses for /courses/list request!")
     return api_success({
-        "total": total
+        "total": total,
+        "pagination": {
+            "page": page,
+            "per_page": per_page,
+            "max_page": courses_total / per_page,
+        }
     } | serialize_courses(courses))
 
 
