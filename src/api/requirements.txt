@@ -1,7 +1,7 @@
 # API server requirements.
 
 # Web framework (FastAPI).
-fastapi==0.86.0 
+fastapi==0.87.0 
 starlette==0.20.4  # Starlette is required for other dependencies and can cause fatal resolving errors! (mail).
 
 # ASGI server worker with
