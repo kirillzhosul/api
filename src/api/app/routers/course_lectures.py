@@ -73,12 +73,12 @@ async def method_courses_lectures_get(req: Request,
 
     course = crud.course.get_by_id(db, course_id) if course_id else crud.course.get_by_name(db, course_name)
     if not course:
-        return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Course with that ID not found!")
+        return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Course with that ID or name not found!")
 
     course_lecture = crud.course_lecture.get_by_id(db, course_lecture_id=course_lecture_id)
     if not course_lecture:
         return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Course lecture with that ID not found!")
-    if course_lecture.course_id != course_id:
+    if course_lecture.course_id != course.id:
         return api_error(ApiErrorCode.API_INVALID_REQUEST, "That course lecture does not belongs to requested course!")
 
     user_has_access_to_content = user_has_access_to_course_content(db, user_id, course)
