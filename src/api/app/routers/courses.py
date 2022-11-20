@@ -3,17 +3,18 @@
     Provides API methods (routes) for working with courses.
 """
 
-from app.services.api.response import api_error, ApiErrorCode, api_success
-from app.services.request.auth import query_auth_data_from_request
-from app.database.dependencies import get_db, Session
-from app.database.models.course import CourseDifficulty
-from app.serializers.course import serialize_course, serialize_courses
-from app.serializers.user_course import serialize_user_course
-from app.database import crud
-from app.config import get_logger
-from app.email.messages import send_purchase_success_email
 from fastapi import APIRouter, Request, Depends, BackgroundTasks
 from fastapi.responses import JSONResponse
+from app.database import crud
+from app.database.dependencies import get_db, Session
+from app.database.models.course import CourseDifficulty
+from app.config import get_logger
+from app.services.api.response import api_error, ApiErrorCode, api_success
+from app.services.request.auth import query_auth_data_from_request
+from app.serializers.course import serialize_course, serialize_courses
+from app.serializers.user_course import serialize_user_course
+from app.email.messages import send_purchase_success_email
+
 
 
 router = APIRouter()
