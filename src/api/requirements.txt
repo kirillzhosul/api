@@ -19,7 +19,7 @@ requests==2.28.1  # Make requests to server.
 
 # Florgon Gatey SDK.
 # (Error logging service).
-gatey-sdk==0.0.3
+gatey-sdk==0.0.6
 
 # CI/CD, Testing.
 pytest==7.2.0  # Unit tests.
