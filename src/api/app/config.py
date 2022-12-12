@@ -13,6 +13,7 @@ from pydantic import BaseSettings, PostgresDsn, RedisDsn, EmailStr, conint
 # Libs.
 import gatey_sdk
 
+
 class Settings(BaseSettings):
     """
     All settings storage.
@@ -120,27 +121,22 @@ class Settings(BaseSettings):
     # Security.
     security_access_tokens_ttl: int = 7776000
     security_tokens_issuer: str = "localhost"
-    security_tokens_secret_key: str =  "RANDOM_SECRET_KEY_TO_BE_SECURE"
+    security_tokens_secret_key: str = "RANDOM_SECRET_KEY_TO_BE_SECURE"
 
 
-def _init_gatey_client(settings: Settings) -> gatey_sdk.Client:
+def _init_gatey_client(settings: Settings) -> gatey_sdk.Client | None:
     """
-    Initializes Gatey client.
+    Initializes Gatey client and returns it.
     """
 
     if not settings.gatey_is_enabled:
-        return
-    
-    def _void_transport(*args, **kwargs):
-        """Void transport that does nothing if gatey is not configured."""
-        ...
-        
-    # TODO: Use server secret.
+        return None
+
     gatey_is_configured = (
-        (settings.gatey_client_secret is not None or settings.gatey_server_secret is not None)
-        and settings.gatey_project_id is not None
-    )
-    gatey_transport = None if gatey_is_configured else _void_transport
+        settings.gatey_client_secret is not None
+        or settings.gatey_server_secret is not None
+    ) and settings.gatey_project_id is not None
+    gatey_transport = None if gatey_is_configured else gatey_sdk.VoidTransport
     gatey_client = gatey_sdk.Client(
         transport=gatey_transport,
         project_id=settings.gatey_project_id,
@@ -149,11 +145,22 @@ def _init_gatey_client(settings: Settings) -> gatey_sdk.Client:
         check_api_auth_on_init=False,
         handle_global_exceptions=False,
         global_handler_skip_internal_exceptions=False,
-        capture_vars=False,
+        buffer_events_for_bulk_sending=True,
+        buffer_events_max_capacity=1,
+        exceptions_capture_vars=False,
+        exceptions_capture_code_context=True,
+        buffer_events_flush_every=10.0,
+        include_runtime_info=True,
+        include_platform_info=True,
+        include_sdk_info=True,
     )
+    if gatey_is_configured and not gatey_client.api.do_auth_check():
+        get_logger().warning("Gatey SDK failed to check Auth!")
+        return None
+
     gatey_client.capture_message(
-        level="DEBUG",
-        message="[Kirill Zhosul API] Server successfully initialized Gatey client (gatey-sdk-py)",
+        level="INFO",
+        message="[Florgon API] Server successfully initialized Gatey client (gatey-sdk-py)",
     )
     return gatey_client
 
@@ -179,11 +186,7 @@ def get_logger():
     return _logger
 
 
-# Static settings object with single instance.
+# Static objects.
 _settings = Settings()
-
-# Static Gatey error logger.
 _gatey = _init_gatey_client(_settings)
-
-# Static logger.
 _logger = logging.getLogger("gunicorn.error")
