@@ -2,30 +2,36 @@
     User purchased course database model.
 """
 
-# Core model base.
-from app.database.core import Base
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, DateTime, Integer, ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.dialects.postgresql import UUID
 
-# ORM.
-from sqlalchemy.sql import func
+from app.database.core import Base
+from app.database.mixins import TimestampMixin
 
 
-class UserCourse(Base):
-    """User purchased course model. """
+class UserCourse(TimestampMixin, Base):
+    """User purchased course model."""
 
     __tablename__ = "user_courses"
 
-    # Access data.
-    id = Column(Integer, primary_key=True, index=True, nullable=False)
-    user_id = Column(ForeignKey("users.id"), nullable=False)
-    course_id = Column(ForeignKey("courses.id"), nullable=False)
+    # UUID of that purchase.
+    id = Column(UUID(as_uuid=True), primary_key=True, index=True, nullable=False)
+
+    # User who is purchased course.
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+
+    # Course which was purchased.
+    course_id = Column(UUID(as_uuid=True), ForeignKey("courses.id"), nullable=False)
     course = relationship("Course", back_populates="user_courses")
 
-    # Price.
+    # Price which user spent at the time when purchasing course.
     purchased_for = Column(Integer, nullable=False)
 
-    # Times.
-    time_purchased = Column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
+    @hybrid_property
+    def purchased_at(self):
+        """
+        Returns date-time when course was purchased by user.
+        """
+        return self.time_created

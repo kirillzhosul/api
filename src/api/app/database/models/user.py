@@ -2,28 +2,34 @@
     User database model.
 """
 
-# Core model base.
+from sqlalchemy import Column, Integer, String, Boolean
+
 from app.database.core import Base
-from sqlalchemy import Column, DateTime, Integer, String, Boolean
-
-# ORM.
-from sqlalchemy.sql import func
+from app.database.mixins import TimestampMixin, UUIDMixin
 
 
-class User(Base):
-    """User model"""
+class User(UUIDMixin, TimestampMixin, Base):
+    """
+    User database model.
+    `User` in this API ecosystem is any authorized human.
+
+    There is UUID as root primary key,
+    and `Florgon` (OAuth SSO) user ID as main one SSO system used to sign-in/up to API (user).
+    """
 
     __tablename__ = "users"
 
-    # Access data.
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, nullable=True)
+    # ID that linked to user by OAuth process (SSO).
+    # For now this is `Florgon` one ecosystem SSO via OAuth.
+    sso_oauth_user_id = Column(Integer, nullable=False)
+
+    # Information about user.
+
+    # By default, captured from OAuth SSO,
+    # if user rejected access, this can reject auth process.
+    # (or can be rejected due to not verified email).
+    email = Column(String, nullable=False)
 
     # Permissions.
+    # TODO: Rework permissions system to something like RBAC.
     is_admin = Column(Boolean, default=False)
-
-    # Time.
-    time_created = Column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
-    time_updated = Column(DateTime(timezone=True), onupdate=func.now())
