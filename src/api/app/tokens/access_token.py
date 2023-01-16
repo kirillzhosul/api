@@ -26,4 +26,4 @@ class AccessToken(BaseToken):
         *,
         key: str | None = None
     ):
-        super().__init__(issuer, ttl, subject=user_id, payload={}, key=key)
+        super().__init__(issuer, ttl, subject=str(user_id), payload={}, key=key)
