@@ -16,7 +16,7 @@ class CourseLecture(UUIDMixin, TimestampMixin, Base):
     __tablename__ = "course_lectures"
 
     # Access data.
-    course_id = Column(UUID(as_uuid=True), ForeignKey("courses.id"), nullable=False)
+    course_id = Column(UUID(as_uuid=False), ForeignKey("courses.id"), nullable=False)
     course = relationship("Course", back_populates="course_lectures")
 
     # Display data.

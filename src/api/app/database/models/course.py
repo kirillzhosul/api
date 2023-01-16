@@ -52,6 +52,6 @@ class Course(UUIDMixin, TimestampMixin, Base):
 
     # Other.
     price = Column(Integer, default=0, nullable=False)
-    owner_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    owner_id = Column(UUID(as_uuid=False), ForeignKey("users.id"), nullable=False)
     user_courses = relationship("UserCourse", back_populates="course")
     course_lectures = relationship("CourseLecture", back_populates="course")
