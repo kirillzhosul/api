@@ -66,7 +66,7 @@ class BaseToken:
     # Set when decoding token, and will be encoded when encoding token.
     _ttl: int | float = 1.0  # Token expiration time in seconds (Time-To-Live, TTL)
     _issuer: str = None  # The issuer of the token (hostname).
-    _subject: int = None  # Subject of the token (ID of the object (User))
+    _subject: str = None  # Subject of the token (UUID of the object (User))
 
     # When decoded token was issued and expires.
     _expires_at: float = 0
@@ -95,7 +95,7 @@ class BaseToken:
         """Returns custom token payload from decoded payload or custom injection."""
         return self.custom_payload
 
-    def get_subject(self) -> int:
+    def get_subject(self) -> str:
         """Returns subject of token as ID."""
         return self._subject
 
@@ -140,7 +140,7 @@ class BaseToken:
         # Arguments.
         if not isinstance(self._key, str):
             raise TypeError("Key should be a string")
-        if not isinstance(self._subject, int):
+        if not isinstance(self._subject, str):
             raise TypeError("Unexpected subject data type!")
         if not isinstance(self._issuer, str):
             raise TypeError("Unexpected issuer data type!")
@@ -304,7 +304,7 @@ class BaseToken:
         self,
         issuer: str,
         ttl: int | float,
-        subject: int,
+        subject: str,
         payload: dict | None = None,
         *,
         key: str | None = None,
@@ -321,8 +321,8 @@ class BaseToken:
             raise TypeError("Issuer must be a string (Hostname)")
         if not isinstance(ttl, int | float):
             raise TypeError("Token TTL must be an number (in seconds)!")
-        if not isinstance(subject, int):
-            raise TypeError("Token subject must be an integer (ID of the object)")
+        if not isinstance(subject, str):
+            raise TypeError("Token subject must be an string (UUID of the object)")
 
         # Payload base.
         self.custom_payload = payload if payload is not None else {}

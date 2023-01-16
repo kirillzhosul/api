@@ -63,7 +63,7 @@ async def method_courses_list(
 
 
 @router.get("/courses/get")
-async def method_courses_get(name: str | None = None, course_id: int | None = None, db: Session = Depends(get_db)) -> JSONResponse:
+async def method_courses_get(name: str | None = None, course_id: str | None = None, db: Session = Depends(get_db)) -> JSONResponse:
     """Returns one course by id/name."""
 
     if (not name and not course_id) or (name and course_id):
@@ -78,7 +78,7 @@ async def method_courses_get(name: str | None = None, course_id: int | None = No
 @router.get("/courses/buy")
 async def method_courses_buy(
     background_tasks: BackgroundTasks, req: Request, 
-    name: str | None = None, course_id: int | None = None,
+    name: str | None = None, course_id: str | None = None,
     db: Session = Depends(get_db)
 ) -> JSONResponse:
     """Buys course by id/name."""

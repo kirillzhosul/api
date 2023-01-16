@@ -17,7 +17,6 @@ from app.tokens import AccessToken, BaseToken
 from app.config import get_settings, get_logger
 
 
-
 def query_auth_data_from_token(
     token: str,
     db: Session,
@@ -39,10 +38,7 @@ def query_auth_data_from_token(
     )
 
 
-def query_auth_data_from_request(
-    req: Request,
-    db: Session
-) -> AuthData:
+def query_auth_data_from_request(req: Request, db: Session) -> AuthData:
     """
     Queries authentication data from request (from request token).
     :param req: Request itself.
@@ -51,10 +47,7 @@ def query_auth_data_from_request(
 
     # Get token from request and query data from it as external token.
     token = _get_token_from_request(req=req)
-    return query_auth_data_from_token(
-        token=token,
-        db=db
-    )
+    return query_auth_data_from_token(token=token, db=db)
 
 
 def try_query_auth_data_from_request(
@@ -69,10 +62,7 @@ def try_query_auth_data_from_request(
 
     try:
         # Try to authenticate, and if does not fall, return OK.
-        auth_data = query_auth_data_from_request(
-            req=req,
-            db=db
-        )
+        auth_data = query_auth_data_from_request(req=req, db=db)
         return True, auth_data
     except ApiErrorException:
         # Any exception occurred - unable to authorize.
@@ -92,10 +82,7 @@ def _get_token_from_request(req: Request) -> str:
     return token_header or token_param
 
 
-def _decode_token(
-    token: str,
-    token_type: Type[BaseToken]
-) -> AuthData:
+def _decode_token(token: str, token_type: Type[BaseToken]) -> AuthData:
     """
     Decodes given token, to payload and session.
     :param token: Token to decode.
@@ -104,9 +91,7 @@ def _decode_token(
     """
 
     if token_type is not AccessToken:
-        raise ValueError(
-            "Unexpected type of the token type inside _decode_token!"
-        )
+        raise ValueError("Unexpected type of the token type inside _decode_token!")
 
     if not token:
         raise ApiErrorException(ApiErrorCode.AUTH_REQUIRED, "Authentication required!")
@@ -126,10 +111,7 @@ def _decode_token(
     return AuthData(token=signed_token)
 
 
-def _query_auth_data(
-    auth_data: AuthData,
-    db: Session
-) -> AuthData:
+def _query_auth_data(auth_data: AuthData, db: Session) -> AuthData:
     """
     Finalizes query of authentication data by query final user object.
     :param auth_data: Authentication data DTO.

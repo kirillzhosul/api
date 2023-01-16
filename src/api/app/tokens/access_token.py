@@ -13,19 +13,17 @@ class AccessToken(BaseToken):
 
     _type = "access"
 
-
-    def get_user_id(self) -> int:
+    def get_user_id(self) -> str:
         """Returns user ID linked to the token."""
         return self._subject
-
 
     def __init__(
         self,
         issuer: str,
         ttl: int | float,
-        user_id: int,
+        user_id: str,
         payload: dict | None = None,
         *,
         key: str | None = None
     ):
-        super().__init__(issuer, ttl, subject=user_id, payload={}, key=key)
+        super().__init__(issuer, ttl, subject=str(user_id), payload={}, key=key)
