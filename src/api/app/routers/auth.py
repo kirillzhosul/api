@@ -78,11 +78,11 @@ async def method_auth_sso(code: str, db: Session = Depends(get_db)) -> JSONRespo
 
     current_user = crud.user.get_by_sso_oauth_user_id(db, sso_user_id)
     if current_user is None:
-        logger.info(
-            f"Registered new user with SSO ID: {sso_user_id} and ID: {current_user.id}"
-        )
         current_user = crud.user.create(
             db, sso_oauth_user_id=sso_user_id, email=sso_user_email
+        )
+        logger.info(
+            f"Registered new user with SSO ID: {sso_user_id} and ID: {current_user.id}"
         )
 
     access_token_ttl = settings.security_access_tokens_ttl
