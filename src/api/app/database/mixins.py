@@ -1,6 +1,7 @@
 """
     Mixin classes for the database models.
 """
+from uuid import uuid4
 from sqlalchemy import Column, DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import UUID
@@ -23,7 +24,9 @@ class UUIDMixin:
     """
 
     # UUID as the primary key.
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, nullable=False)
+    id = Column(
+        UUID(as_uuid=True), default=uuid4, primary_key=True, index=True, nullable=False
+    )
 
 
 __all__ = ["TimestampMixin", "UUIDMixin"]
