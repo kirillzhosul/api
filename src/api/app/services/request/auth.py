@@ -120,7 +120,7 @@ def _query_auth_data(auth_data: AuthData, db: Session) -> AuthData:
 
     # Query database for our user to feed into auth data DTO.
     user_id = auth_data.token.get_subject()
-    user = crud.user.get_by_sso_oauth_user_id(db=db, sso_oauth_user_id=user_id)
+    user = crud.user.get_by_id(db=db, user_id=user_id)
 
     if not user:
         # Internal authentication system integrity check.
