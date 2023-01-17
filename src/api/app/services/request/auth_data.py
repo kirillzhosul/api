@@ -15,7 +15,7 @@ class AuthData:
     def __init__(
         self,
         token: BaseToken,
-        user_id: int | None = None,
+        user_id: str | None = None,
         user: User | None = None,
     ) -> None:
         """
