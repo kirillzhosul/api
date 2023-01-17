@@ -40,7 +40,7 @@ class UserRole(TimestampMixin, Base):
     # Courses.
     # (Including lectures).
     p_buy_courses = Column(
-        Boolean, default=True, server_default=expression.false(), nullable=False
+        Boolean, default=True, server_default=expression.true(), nullable=False
     )
     p_buy_courses_for_free = Column(
         Boolean, default=False, server_default=expression.false(), nullable=False

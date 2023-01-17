@@ -34,5 +34,5 @@ class User(UUIDMixin, TimestampMixin, Base):
 
     # Permissions.
     # TODO: Review default role.
-    role_id = Column(Integer, ForeignKey("user_roles.id"), nullable=False, default=0)
+    role_id = Column(Integer, ForeignKey("user_roles.id"), nullable=False, default=1)
     role: UserRole = relationship(UserRole)
