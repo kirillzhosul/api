@@ -33,7 +33,7 @@ async def method_roles_list(
                     "id": role.id,
                     "permisions": {
                         k: v
-                        for k, v in role.__dict__
+                        for k, v in role.__dict__.items()
                         if isinstance(k, str) and k.startswith("p_")
                     },
                 }
