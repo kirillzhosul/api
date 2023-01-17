@@ -26,7 +26,7 @@ class UUIDMixin:
     # UUID as the primary key.
     id = Column(
         UUID(as_uuid=False),
-        default=lambda: str(uuid4),
+        default=lambda: str(uuid4()),
         primary_key=True,
         index=True,
         nullable=False,
