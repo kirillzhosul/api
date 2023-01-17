@@ -142,8 +142,8 @@ async def method_courses_lectures_new(
 ) -> JSONResponse:
     """Creates new course lecture (permitted only)."""
 
-    auth_data = query_auth_data_from_request(req, db)
-    if not auth_data.user.is_admin:
+    user = query_auth_data_from_request(req, db).user
+    if not user.role.p_create_courses:
         return api_error(
             ApiErrorCode.API_FORBIDDEN, "You have no access to call this method!"
         )
@@ -177,5 +177,10 @@ async def method_courses_lectures_edit(
 ) -> JSONResponse:
     """Edits course lecture (permitted only)."""
 
-    query_auth_data_from_request(req, db)
+    user = query_auth_data_from_request(req, db).user
+    if not user.role.p_edit_courses:
+        return api_error(
+            ApiErrorCode.API_FORBIDDEN, "You have no access to call this method!"
+        )
+
     return api_error(ApiErrorCode.API_NOT_IMPLEMENTED, "Courses not implemented yet.")

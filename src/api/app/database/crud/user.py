@@ -16,12 +16,9 @@ def get_by_sso_oauth_user_id(db: Session, sso_oauth_user_id: str) -> User:
     return db.query(User).filter(User.sso_oauth_user_id == sso_oauth_user_id).first()
 
 
-def get_all(db: Session, admins_only: bool = False) -> list[User]:
+def get_all(db: Session) -> list[User]:
     """Returns all users."""
-    query = db.query(User)
-    if admins_only:
-        query = query.filter(User.is_admin == admins_only)
-    return query.all()
+    return db.query(User).all()
 
 
 def create(db: Session, sso_oauth_user_id: int, email: str | None = None) -> User:

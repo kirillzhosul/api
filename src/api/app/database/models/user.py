@@ -2,10 +2,12 @@
     User database model.
 """
 
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
 
 from app.database.core import Base
 from app.database.mixins import TimestampMixin, UUIDMixin
+from app.database.models.user_role import UserRole
 
 
 class User(UUIDMixin, TimestampMixin, Base):
@@ -31,5 +33,5 @@ class User(UUIDMixin, TimestampMixin, Base):
     email = Column(String, nullable=False)
 
     # Permissions.
-    # TODO: Rework permissions system to something like RBAC.
-    is_admin = Column(Boolean, default=False)
+    role_id = Column(Integer, ForeignKey("user_roles.id"), nullable=False)
+    role: UserRole = relationship(UserRole)

@@ -6,7 +6,7 @@
 from app.config import get_settings
 from fastapi import FastAPI
 
-from . import utils, auth, courses, course_lectures, users, mailing, appeals
+from . import utils, auth, courses, course_lectures, users, mailing
 
 
 def include_routers(app: FastAPI) -> None:
@@ -15,5 +15,5 @@ def include_routers(app: FastAPI) -> None:
     """
     settings = get_settings()
     proxy_url_prefix = settings.proxy_url_prefix
-    for module in [utils, auth, courses, course_lectures, users, mailing, appeals]:
+    for module in [utils, auth, courses, course_lectures, users, mailing]:
         app.include_router(module.router, prefix=proxy_url_prefix)

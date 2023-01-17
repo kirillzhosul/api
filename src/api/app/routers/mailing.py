@@ -17,28 +17,35 @@ router = APIRouter()
 
 @router.get("/mailing/send")
 async def method_mailing_send(
-    req: Request, background_tasks: BackgroundTasks,
-    subject: str = "", message: str = "",
+    req: Request,
+    background_tasks: BackgroundTasks,
+    subject: str = "",
+    message: str = "",
     mailing_group_id: int | None = None,
-    skip_create_task: bool = False, 
+    skip_create_task: bool = False,
     display_recepients: bool = False,
-    admins_only: bool = False, 
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ) -> JSONResponse:
     """Creates new mailing task (Permitted only)."""
 
-    auth_data = query_auth_data_from_request(req, db)
-    if not auth_data.user.is_admin:
-        return api_error(ApiErrorCode.API_FORBIDDEN, "You have no access to call this method!")
-    
+    user = query_auth_data_from_request(req, db).user
+    if not user.role.p_manage_mailings:
+        return api_error(
+            ApiErrorCode.API_FORBIDDEN, "You have no access to call this method!"
+        )
+
     if not subject or not message:
-        return api_error(ApiErrorCode.API_INVALID_REQUEST, "Subject and message required!")
+        return api_error(
+            ApiErrorCode.API_INVALID_REQUEST, "Subject and message required!"
+        )
 
     if mailing_group_id:
         users = []
-        return api_error(ApiErrorCode.API_ITEM_NOT_FOUND, "Mailing group is not found yet...")
+        return api_error(
+            ApiErrorCode.API_ITEM_NOT_FOUND, "Mailing group is not found yet..."
+        )
     else:
-        users = crud.user.get_all(db, admins_only=admins_only)
+        users = crud.user.get_all(db)
     # Doing database requests like that is not good!
     recepients = [user.email for user in users]
 
@@ -49,11 +56,8 @@ async def method_mailing_send(
 
     response = {
         "total_recepients": len(recepients),
-        "task_created": not skip_create_task
+        "task_created": not skip_create_task,
     }
     if display_recepients:
-        response |= {
-            "recepients": recepients
-        }
+        response |= {"recepients": recepients}
     return api_success(response)
-
