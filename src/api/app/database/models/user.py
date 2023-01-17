@@ -33,5 +33,6 @@ class User(UUIDMixin, TimestampMixin, Base):
     email = Column(String, nullable=False)
 
     # Permissions.
-    role_id = Column(Integer, ForeignKey("user_roles.id"), nullable=False)
+    # TODO: Review default role.
+    role_id = Column(Integer, ForeignKey("user_roles.id"), nullable=False, default=0)
     role: UserRole = relationship(UserRole)
