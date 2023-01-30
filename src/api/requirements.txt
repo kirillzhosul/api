@@ -27,7 +27,7 @@ pytest-cov==4.0.0  # Tests coverage.
 
 # Mail wrapper for FastAPI.
 # used to send email messages.
-fastapi_mail==1.2.0
+fastapi_mail==1.2.5
 
 # Security, authentication.
 pyjwt==2.6.0  # JWTokens implementation for the base token.
