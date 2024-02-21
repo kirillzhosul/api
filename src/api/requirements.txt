@@ -2,7 +2,7 @@
 
 # Web framework (FastAPI).
 fastapi==0.86.0 
-starlette==0.20.4  # Starlette is required for other dependencies and can cause fatal resolving errors! (mail).
+starlette==0.37.1  # Starlette is required for other dependencies and can cause fatal resolving errors! (mail).
 
 # ASGI server worker with
 # server process manager.
