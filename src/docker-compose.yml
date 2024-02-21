@@ -24,14 +24,6 @@ services:
       - "max_connections=1000" # SHOW max_connections;
       - "-c" # Buffer size for database bufferization.
       - "shared_buffers=128MB" # SHOW shared_buffers;
-  database-poller:
-    image: edoburu/pgbouncer
-    env_file:
-      - .database.env
-    depends_on:
-      - database
-    networks:
-      - kirillzhosul-api
   cache:
     image: redis:7-alpine
     hostname: kirillzhosul-api
@@ -52,7 +44,6 @@ services:
       - "${COMPOSE_EXPOSED_PORT}:80"
     depends_on:
       - database
-      - database-poller
       - cache
     links:
       - database
